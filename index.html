@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Go WebAssembly Test</title>
+</head>
+<body>
+<h1>Go WebAssembly Test</h1>
+<div id="result"></div>
+
+<script src="wasm_exec.js"></script>
+<script type="module">
+    // 加载wasm_exec.js (Go提供的胶水代码)
+    const go = new Go();
+
+    WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+        .then((result) => {
+            go.run(result.instance);
+
+            // 测试add函数
+            const sum = wasmAdd(5, 3);
+            console.log('5 + 3 =', sum);
+
+            // 测试fibonacci函数
+            const fib = wasmFibonacci(10);
+            console.log('Fibonacci(10) =', fib);
+
+            // 测试greet函数
+            const greeting = wasmGreet('WebAssembly');
+            console.log(greeting);
+
+            document.getElementById('result').textContent =
+                `Sum: ${sum}\nFibonacci(10): ${fib}\nGreeting: ${greeting}`;
+        })
+        .catch(console.error);
+</script>
+</body>
+</html> 
